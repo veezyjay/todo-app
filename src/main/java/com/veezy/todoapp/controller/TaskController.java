@@ -5,10 +5,9 @@ import com.veezy.todoapp.response.ResponseTemplate;
 import com.veezy.todoapp.service.TaskService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/tasks")
@@ -26,5 +25,13 @@ public class TaskController {
         ResponseTemplate<Task> responseBody = new ResponseTemplate<>(HttpStatus.CREATED.value(),
                 "Successfully added new task", theTask);
         return new ResponseEntity<>(responseBody, HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    public ResponseEntity<ResponseTemplate<List<Task>>> getAllTasks() {
+        List<Task> tasks = taskService.getAllTasks();
+        ResponseTemplate<List<Task>> responseBody = new ResponseTemplate<>(HttpStatus.OK.value(),
+                "Successfully retrieved all tasks", tasks);
+        return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
 }
