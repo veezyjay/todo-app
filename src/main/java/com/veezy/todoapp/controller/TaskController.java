@@ -1,7 +1,30 @@
 package com.veezy.todoapp.controller;
 
+import com.veezy.todoapp.model.Task;
+import com.veezy.todoapp.response.ResponseTemplate;
+import com.veezy.todoapp.service.TaskService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/tasks")
 public class TaskController {
+
+    private TaskService taskService;
+
+    public TaskController(TaskService taskService) {
+        this.taskService = taskService;
+    }
+
+    @PostMapping
+    public ResponseEntity<ResponseTemplate<Task>> addTask(@RequestBody Task newTask) {
+        Task theTask = taskService.addTask(newTask);
+        ResponseTemplate<Task> responseBody = new ResponseTemplate<>(HttpStatus.CREATED.value(),
+                "Successfully added new task", theTask);
+        return new ResponseEntity<>(responseBody, HttpStatus.CREATED);
+    }
 }
