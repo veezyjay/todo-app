@@ -45,4 +45,10 @@ public class TaskController {
                 "Successfully retrieved task", theTask);
         return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
+
+    @DeleteMapping("/{taskId}")
+    public ResponseEntity<String> deleteTask(@PathVariable Integer taskId) {
+        String responseBody = taskService.deleteTask(taskId);
+        return new ResponseEntity<>(responseBody, HttpStatus.OK);
+    }
 }
