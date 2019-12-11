@@ -9,4 +9,5 @@ public interface TaskService {
     List<Task> getAllTasks();
     Task getTask(Integer taskId);
     String deleteTask(Integer taskId);
+    Task updateTask(Task theTask);
 }

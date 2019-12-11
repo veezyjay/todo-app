@@ -51,4 +51,12 @@ public class TaskController {
         String responseBody = taskService.deleteTask(taskId);
         return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
+
+    @PutMapping
+    public ResponseEntity<ResponseTemplate<Task>> updateTask(@RequestBody Task newTask) {
+        Task theTask = taskService.updateTask(newTask);
+        ResponseTemplate<Task> responseBody = new ResponseTemplate<>(HttpStatus.OK.value(),
+                "Successfully updated task", theTask);
+        return new ResponseEntity<>(responseBody, HttpStatus.OK);
+    }
 }

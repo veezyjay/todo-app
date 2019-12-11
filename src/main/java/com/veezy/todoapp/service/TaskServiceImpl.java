@@ -41,4 +41,9 @@ public class TaskServiceImpl implements TaskService {
         taskRepository.deleteById(taskId);
         return "Successfully deleted task with id - " + taskId;
     }
+
+    @Override
+    public Task updateTask(Task theTask) {
+        return taskRepository.save(theTask);
+    }
 }
