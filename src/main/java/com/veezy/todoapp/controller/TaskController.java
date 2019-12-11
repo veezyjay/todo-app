@@ -34,4 +34,15 @@ public class TaskController {
                 "Successfully retrieved all tasks", tasks);
         return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
+
+    @GetMapping("/{taskId}")
+    public ResponseEntity<ResponseTemplate<Task>> getTask(@PathVariable Integer taskId) {
+        Task theTask = taskService.getTask(taskId);
+        if (theTask == null) {
+            throw new RuntimeException("Task is not available. Try again");
+        }
+        ResponseTemplate<Task> responseBody = new ResponseTemplate<>(HttpStatus.OK.value(),
+                "Successfully retrieved task", theTask);
+        return new ResponseEntity<>(responseBody, HttpStatus.OK);
+    }
 }

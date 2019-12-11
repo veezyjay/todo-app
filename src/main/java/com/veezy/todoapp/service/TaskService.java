@@ -5,6 +5,7 @@ import com.veezy.todoapp.model.Task;
 import java.util.List;
 
 public interface TaskService {
-    public Task addTask(Task theTask);
-    public List<Task> getAllTasks();
+    Task addTask(Task theTask);
+    List<Task> getAllTasks();
+    Task getTask(Integer taskId);
 }
