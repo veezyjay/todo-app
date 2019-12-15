@@ -28,6 +28,10 @@ public class Task {
     @Column(name = "description")
     private String description;
 
+    @ManyToOne(cascade= {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
+    @JoinColumn(name = "user_id")
+    private User taskCreator;
+
     @Column(name = "task_status")
     @Enumerated(EnumType.STRING)
     private Status taskStatus;
