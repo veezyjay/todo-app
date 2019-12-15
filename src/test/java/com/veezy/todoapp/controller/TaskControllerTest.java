@@ -1,6 +1,7 @@
 package com.veezy.todoapp.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.veezy.todoapp.exception.TaskNotFoundException;
 import com.veezy.todoapp.model.Task;
 import com.veezy.todoapp.service.TaskService;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,10 +13,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.util.NestedServletException;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
@@ -72,6 +75,16 @@ class TaskControllerTest {
         mockMvc.perform(get("/tasks/{id}", 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").exists());
+    }
+
+    @Test
+    void getTaskWrongId() throws Exception {
+        when(taskService.getTask(anyInt())).thenReturn(null);
+        try {
+            mockMvc.perform(get("/tasks/{id}", 1));
+        } catch (NestedServletException e) {
+            assertEquals(TaskNotFoundException.class, e.getRootCause().getClass());
+        }
     }
 
     @Test
