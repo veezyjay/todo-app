@@ -1,5 +1,6 @@
 package com.veezy.todoapp.controller;
 
+import com.veezy.todoapp.exception.TaskNotFoundException;
 import com.veezy.todoapp.model.Task;
 import com.veezy.todoapp.response.ResponseTemplate;
 import com.veezy.todoapp.service.TaskService;
@@ -39,7 +40,7 @@ public class TaskController {
     public ResponseEntity<ResponseTemplate<Task>> getTask(@PathVariable Integer taskId) {
         Task theTask = taskService.getTask(taskId);
         if (theTask == null) {
-            throw new RuntimeException("Task is not available. Try again");
+            throw new TaskNotFoundException("Task is not available. Try again with a valid task ID");
         }
         ResponseTemplate<Task> responseBody = new ResponseTemplate<>(HttpStatus.OK.value(),
                 "Successfully retrieved task", theTask);
