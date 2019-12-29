@@ -1,5 +1,6 @@
 package com.veezy.todoapp.service;
 
+import com.veezy.todoapp.model.Status;
 import com.veezy.todoapp.model.Task;
 import com.veezy.todoapp.repository.TaskRepository;
 import org.springframework.stereotype.Service;
@@ -54,5 +55,10 @@ public class TaskServiceImpl implements TaskService {
 
         }
         return taskRepository.save(task);
+    }
+
+    @Override
+    public List<Task> getByStatus(Status status) {
+        return taskRepository.findAllByTaskStatus(status);
     }
 }
