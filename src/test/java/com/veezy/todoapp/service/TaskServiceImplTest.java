@@ -1,5 +1,6 @@
 package com.veezy.todoapp.service;
 
+import com.veezy.todoapp.model.Status;
 import com.veezy.todoapp.model.Task;
 import com.veezy.todoapp.repository.TaskRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,7 +34,7 @@ class TaskServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        returnTask = Task.builder().id(1).createdAt(LocalDateTime.now()).build();
+        returnTask = Task.builder().id(1).createdAt(LocalDateTime.now()).taskStatus(Status.pending).build();
     }
 
     @Test
@@ -84,5 +85,17 @@ class TaskServiceImplTest {
         assertEquals(1, updatedTask.getId());
         assertEquals(returnTask.getCreatedAt(), updatedTask.getCreatedAt());
         verify(taskRepository).findById(anyInt());
+    }
+
+    @Test
+    void getByStatus() {
+        List<Task> taskList = new ArrayList<>();
+        taskList.add(returnTask);
+
+        when(taskRepository.findAllByTaskStatus(any(Status.class))).thenReturn(taskList);
+
+        List<Task> testTasks = taskService.getByStatus(Status.pending);
+        assertNotNull(testTasks);
+        assertEquals(1, testTasks.size());
     }
 }

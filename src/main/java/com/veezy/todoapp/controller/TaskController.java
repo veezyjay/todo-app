@@ -1,6 +1,7 @@
 package com.veezy.todoapp.controller;
 
 import com.veezy.todoapp.exception.TaskNotFoundException;
+import com.veezy.todoapp.model.Status;
 import com.veezy.todoapp.model.Task;
 import com.veezy.todoapp.response.ResponseTemplate;
 import com.veezy.todoapp.service.TaskService;
@@ -44,6 +45,15 @@ public class TaskController {
         }
         ResponseTemplate<Task> responseBody = new ResponseTemplate<>(HttpStatus.OK.value(),
                 "Successfully retrieved task", theTask);
+        return new ResponseEntity<>(responseBody, HttpStatus.OK);
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<ResponseTemplate<List<Task>>> getTaskByStatus(@RequestParam(name = "status") Status status) {
+        List<Task> tasks = taskService.getByStatus(status);
+
+        ResponseTemplate<List<Task>> responseBody = new ResponseTemplate<>(HttpStatus.OK.value(),
+                "Successfully retrieved the tasks", tasks);
         return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
 

@@ -1,5 +1,6 @@
 package com.veezy.todoapp.service;
 
+import com.veezy.todoapp.model.Status;
 import com.veezy.todoapp.model.Task;
 
 import java.util.List;
@@ -10,4 +11,5 @@ public interface TaskService {
     Task getTask(Integer taskId);
     String deleteTask(Integer taskId);
     Task updateTask(Task theTask);
+    List<Task> getByStatus(Status status);
 }
