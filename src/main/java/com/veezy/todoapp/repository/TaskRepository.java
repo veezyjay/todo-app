@@ -6,8 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Integer> {
-    List<Task> findAllByTaskStatus(Status taskStatus);
+    List<Task> findByTaskStatusAndTaskCreatorId(Status taskStatus, Integer creatorId);
+    Optional<Task> findByIdAndTaskCreatorId(Integer taskId, Integer creatorId);
 }
