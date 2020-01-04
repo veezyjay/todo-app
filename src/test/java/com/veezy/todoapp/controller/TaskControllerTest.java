@@ -1,7 +1,7 @@
 package com.veezy.todoapp.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.veezy.todoapp.exception.TaskNotFoundException;
+import com.veezy.todoapp.exception.ResourceNotFoundException;
 import com.veezy.todoapp.model.Task;
 import com.veezy.todoapp.service.TaskService;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,8 +55,8 @@ class TaskControllerTest {
         Task taskToAdd = Task.builder().title("my task").build();
         when(taskService.addTask(any())).thenReturn(taskToAdd);
         mockMvc.perform(post("/tasks")
-                        .content(asJsonString(taskToAdd))
-                        .contentType(MediaType.APPLICATION_JSON))
+                .content(asJsonString(taskToAdd))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.data.title").exists());
     }
@@ -83,7 +83,7 @@ class TaskControllerTest {
         try {
             mockMvc.perform(get("/tasks/{id}", 1));
         } catch (NestedServletException e) {
-            assertEquals(TaskNotFoundException.class, e.getRootCause().getClass());
+            assertEquals(ResourceNotFoundException.class, e.getRootCause().getClass());
         }
     }
 
@@ -97,10 +97,10 @@ class TaskControllerTest {
     @Test
     void updateTask() throws Exception {
         Task taskToUpdate = Task.builder().id(1).title("updated task").build();
-        when(taskService.updateTask(any())).thenReturn(taskToUpdate);
-        mockMvc.perform(put("/tasks")
-                        .content(asJsonString(taskToUpdate))
-                        .contentType(MediaType.APPLICATION_JSON))
+        when(taskService.updateTask(any(), anyInt())).thenReturn(taskToUpdate);
+        mockMvc.perform(put("/tasks/{taskId}", 1)
+                .content(asJsonString(taskToUpdate))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.title").value("updated task"));
     }

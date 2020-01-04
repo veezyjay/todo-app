@@ -1,7 +1,10 @@
 package com.veezy.todoapp.service;
 
+import com.veezy.todoapp.authentication.AuthenticationFacade;
+import com.veezy.todoapp.exception.ResourceNotFoundException;
 import com.veezy.todoapp.model.Status;
 import com.veezy.todoapp.model.Task;
+import com.veezy.todoapp.model.User;
 import com.veezy.todoapp.repository.TaskRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,64 +30,84 @@ class TaskServiceImplTest {
     @Mock
     TaskRepository taskRepository;
 
+    @Mock
+    AuthenticationFacade authenticationFacade;
+
+    @Mock
+    UserService userService;
+
     @InjectMocks
     TaskServiceImpl taskService;
 
     Task returnTask;
+    User user;
 
     @BeforeEach
     void setUp() {
         returnTask = Task.builder().id(1).createdAt(LocalDateTime.now()).taskStatus(Status.pending).build();
+        user = User.builder().id(1).username("user").build();
     }
 
     @Test
     void addTask() {
-        Task taskToAdd = Task.builder().id(1).build();
+        when(authenticationFacade.getId()).thenReturn(user.getId());
+        when(userService.getUser(anyInt())).thenReturn(user);
         when(taskRepository.save(any())).thenReturn(returnTask);
-        Task addedTask = taskService.addTask(taskToAdd);
+
+        Task addedTask = taskService.addTask(returnTask);
         assertNotNull(addedTask);
+        assertEquals(returnTask.getId(), addedTask.getId());
     }
 
     @Test
     void getAllTasks() {
         List<Task> taskList = new ArrayList<>();
         taskList.add(returnTask);
+        user.setTasks(taskList);
 
-        when(taskRepository.findAll()).thenReturn(taskList);
+        when(authenticationFacade.getId()).thenReturn(1);
+        when(userService.getUser(anyInt())).thenReturn(user);
 
         List<Task> testTasks = taskService.getAllTasks();
+        verify(authenticationFacade).getId();
         assertNotNull(testTasks);
-        assertEquals(1, testTasks.size());
+        assertEquals(user.getTasks().size(), testTasks.size());
     }
 
     @Test
-    void getTask() {
-        when(taskRepository.findById(anyInt())).thenReturn(Optional.of(returnTask));
+    void getAlreadyExistingTask() {
+        when(authenticationFacade.getId()).thenReturn(user.getId());
+        when(taskRepository.findByIdAndTaskCreatorId(anyInt(), anyInt())).thenReturn(Optional.of(returnTask));
         Task testTask = taskService.getTask(1);
         assertNotNull(testTask);
         assertEquals(1, testTask.getId());
     }
 
     @Test
-    void getTaskNotFound() {
-        when(taskRepository.findById(anyInt())).thenReturn(Optional.empty());
-        Task testTask = taskService.getTask(5);
-        assertNull(testTask);
+    void getNonExistingTask() {
+        when(authenticationFacade.getId()).thenReturn(user.getId());
+        when(taskRepository.findByIdAndTaskCreatorId(anyInt(), anyInt())).thenThrow(ResourceNotFoundException.class);
+        assertThrows(ResourceNotFoundException.class, () ->taskService.getTask(5));
     }
 
     @Test
     void deleteTask() {
+        when(authenticationFacade.getId()).thenReturn(user.getId());
+        when(taskRepository.findByIdAndTaskCreatorId(anyInt(), anyInt())).thenReturn(Optional.of(returnTask));
         taskService.deleteTask(1);
-        verify(taskRepository).deleteById(anyInt());
+        verify(taskRepository).delete(returnTask);
     }
 
     @Test
     void updateTask() {
+        when(authenticationFacade.getId()).thenReturn(user.getId());
+        when(taskRepository.findByIdAndTaskCreatorId(anyInt(), anyInt())).thenReturn(Optional.of(returnTask));
         when(taskRepository.save(any())).thenReturn(returnTask);
-        Task updatedTask = taskService.updateTask(returnTask);
+
+        Task updatedTask = taskService.updateTask(returnTask, 1);
         assertEquals(1, updatedTask.getId());
         assertEquals(returnTask.getCreatedAt(), updatedTask.getCreatedAt());
-        verify(taskRepository).findById(anyInt());
+        assertEquals(returnTask.getTaskCreator(), updatedTask.getTaskCreator());
     }
 
     @Test
@@ -92,7 +115,8 @@ class TaskServiceImplTest {
         List<Task> taskList = new ArrayList<>();
         taskList.add(returnTask);
 
-        when(taskRepository.findAllByTaskStatus(any(Status.class))).thenReturn(taskList);
+        when(authenticationFacade.getId()).thenReturn(user.getId());
+        when(taskRepository.findByTaskStatusAndTaskCreatorId(any(Status.class), anyInt())).thenReturn(taskList);
 
         List<Task> testTasks = taskService.getByStatus(Status.pending);
         assertNotNull(testTasks);
