@@ -1,27 +1,22 @@
 package com.veezy.todoapp.response;
 
 public class ResponseTemplate<T> {
-    private int statusCode;
+    private int status;
     private String message;
     private T data;
 
-    public ResponseTemplate(int statusCode, String message) {
-        this.statusCode = statusCode;
-        this.message = message;
-    }
-
-    public ResponseTemplate(int statusCode, String message, T data) {
-        this.statusCode = statusCode;
+    public ResponseTemplate(int status, String message, T data) {
+        this.status = status;
         this.message = message;
         this.data = data;
     }
 
-    public int getStatusCode() {
-        return statusCode;
+    public int getStatus() {
+        return status;
     }
 
-    public void setStatusCode(int status) {
-        this.statusCode = status;
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public String getMessage() {

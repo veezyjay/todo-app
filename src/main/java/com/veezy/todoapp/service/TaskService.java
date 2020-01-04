@@ -10,6 +10,6 @@ public interface TaskService {
     List<Task> getAllTasks();
     Task getTask(Integer taskId);
     String deleteTask(Integer taskId);
-    Task updateTask(Task theTask);
+    Task updateTask(Task theTask, Integer taskId);
     List<Task> getByStatus(Status status);
 }

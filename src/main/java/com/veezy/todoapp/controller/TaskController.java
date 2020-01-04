@@ -1,6 +1,5 @@
 package com.veezy.todoapp.controller;
 
-import com.veezy.todoapp.exception.TaskNotFoundException;
 import com.veezy.todoapp.model.Status;
 import com.veezy.todoapp.model.Task;
 import com.veezy.todoapp.response.ResponseTemplate;
@@ -40,9 +39,6 @@ public class TaskController {
     @GetMapping("/{taskId}")
     public ResponseEntity<ResponseTemplate<Task>> getTask(@PathVariable Integer taskId) {
         Task theTask = taskService.getTask(taskId);
-        if (theTask == null) {
-            throw new TaskNotFoundException("Task is not available. Try again with a valid task ID");
-        }
         ResponseTemplate<Task> responseBody = new ResponseTemplate<>(HttpStatus.OK.value(),
                 "Successfully retrieved task", theTask);
         return new ResponseEntity<>(responseBody, HttpStatus.OK);
@@ -58,14 +54,14 @@ public class TaskController {
     }
 
     @DeleteMapping("/{taskId}")
-    public ResponseEntity<String> deleteTask(@PathVariable Integer taskId) {
+    public ResponseEntity<String> deleteTask(@PathVariable("taskId") Integer taskId) {
         String responseBody = taskService.deleteTask(taskId);
         return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
 
-    @PutMapping
-    public ResponseEntity<ResponseTemplate<Task>> updateTask(@RequestBody Task newTask) {
-        Task theTask = taskService.updateTask(newTask);
+    @PutMapping("/{taskId}")
+    public ResponseEntity<ResponseTemplate<Task>> updateTask(@PathVariable Integer taskId, @RequestBody Task newTask) {
+        Task theTask = taskService.updateTask(newTask, taskId);
         ResponseTemplate<Task> responseBody = new ResponseTemplate<>(HttpStatus.OK.value(),
                 "Successfully updated task", theTask);
         return new ResponseEntity<>(responseBody, HttpStatus.OK);
