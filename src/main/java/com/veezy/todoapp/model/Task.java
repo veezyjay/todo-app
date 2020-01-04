@@ -1,5 +1,6 @@
 package com.veezy.todoapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -8,7 +9,6 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "tasks")
 @Builder
 @Getter
 @Setter
@@ -28,6 +28,7 @@ public class Task {
     @Column(name = "description")
     private String description;
 
+    @JsonIgnore
     @ManyToOne(cascade= {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "user_id")
     private User taskCreator;
