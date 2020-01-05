@@ -15,7 +15,7 @@ import java.util.function.Function;
 @Service
 public class JwtUtil {
 
-    @Value("${com.veezy.todo-app.jwtSecret}")
+    @Value("${app.jwtSecret}")
     private String SECRET_KEY;
 
     public String extractUsername(String token) {
