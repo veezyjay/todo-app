@@ -5,6 +5,7 @@ import com.veezy.todoapp.request.LoginRequest;
 import com.veezy.todoapp.response.AuthenticationResponse;
 import com.veezy.todoapp.service.TodoUserDetailsService;
 import com.veezy.todoapp.util.JwtUtil;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -28,6 +29,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
+    @ApiOperation("Logs a user in if the username and password are correct")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody LoginRequest loginRequest) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
